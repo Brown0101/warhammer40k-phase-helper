@@ -1,0 +1,190 @@
+
+{% block title %}Command Phase{% endblock %}
+<div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <div class="jumbotron p-3">
+                    <h2>Manage <strong>Units </strong>
+                        <button type="button" class="btn btn-sm btn-success float-right"
+                                data-toggle="modal" data-target="#addunit">Add New Unit
+                        </button>
+                    </h2>
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible role-alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                                        <span arial-hidden="true">X</span>
+                                    </button>
+
+                                {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <table class="table table-hover table-dark">
+
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Phase</th>
+                            <th>Action</th>
+                            <th>Type</th>
+                            <th>Unit's Status</th>
+                            <td>Remove</td>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for unit in unit_data %}
+                            {% if unit.is_alive and unit.phase == 'Psychic Phase' %}
+                        <tr>
+                            <td>{{ unit.id }}</td>
+                            <td>{{ unit.name }}</td>
+                            <td>{{ unit.phase }}</td>
+                            <td>{{ unit.action }}</td>
+                            <td>{{ unit.type }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-warning" href="/update/{{ unit.id }}" data-toggle="modal" data-target="#editunit{{ unit.id }}" role="button">EDIT</a>
+                                </button>
+                                <a class="btn btn-sm btn-success" role="button" href="/kill/{{ unit.id }}" onclick="return confirm('Are you sure you want to mark unit as killed.')">KILL</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-danger" role="button" href="/delete/{{ unit.id }}" onclick="return confirm('Are you sure you want delete this units action?')">DELETE</a>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                        <!-- Edit Unit Modal Structure -->
+                        <div id="editunit{{ unit.id }}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Add Unit</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ url_for('update') }}" method="POST">
+                                            <input type="hidden" name="id" value="{{ unit.id }}">
+
+                                            <div class="form-group">
+                                                <label>Name:</label>
+                                                <input type="text" class="form-control" name="name" value="{{ unit.name }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <select class="form-control" name="phase" aria-label="Default select example">
+                                                  <option selected>{{ unit.phase }}</option>
+                                                  <option value="Before Game">Before Game</option>
+                                                  <option value="Command Phase">Command Phase</option>
+                                                  <option value="Movement Phase">Movement Phase</option>
+                                                  <option value="Psychic Phase">Psychic Phase</option>
+                                                  <option value="Shooting Phase">Shooting Phase</option>
+                                                  <option value="Charge Phase">Charge Phase</option>
+                                                  <option value="Fight Phase">Fight Phase</option>
+                                                  <option value="Morale Phase">Morale Phase</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Action:</label>
+                                                <input type="text" class="form-control" name="action" value="{{ unit.action }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <select class="form-control" name="type" aria-label="Default select example">
+                                                  <option selected>{{ unit.type }}</option>
+                                                  <option value="Aura">Aura</option>
+                                                  <option value="Offensive">Offensive</option>
+                                                  <option value="Defensive">Defensive</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <button class="btn btn-success" type="submit">Update Unit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" data-dismiss="modal" type="submit">Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Unit Modal Structure -->
+    <div id="addunit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Unit</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('insert') }}" method="POST">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" class="form-control" name="name" required="1">
+                        </div>
+
+                        <div class="form-group">
+                            <select class="form-control" name="phase" aria-label="Default select example">
+                              <option selected>Before Game</option>
+                                <option value="Before Game">Before Game</option>
+                              <option value="Command Phase">Command Phase</option>
+                              <option value="Movement Phase">Movement Phase</option>
+                              <option value="Psychic Phase">Psychic Phase</option>
+                              <option value="Shooting Phase">Shooting Phase</option>
+                              <option value="Charge Phase">Charge Phase</option>
+                              <option value="Fight Phase">Fight Phase</option>
+                              <option value="Morale Phase">Morale Phase</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Action:</label>
+                            <input type="text" class="form-control" name="action" required="1">
+                        </div>
+
+                        <div class="form-group">
+                            <select class="form-control" name="type" aria-label="Default select example">
+                              <option selected>Aura</option>
+                              <option value="Aura">Aura</option>
+                              <option value="Offensive">Offensive</option>
+                              <option value="Defensive">Defensive</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-success" type="submit">Add Unit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="submit">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{#    <script>#}
+{#        $('#addunit').on('show.bs.modal', function (event) {#}
+{#            var button = $(event.relatedTarget) // Button that triggered the modal#}
+{#            var recipient = button.data('whatever') // Extract info from data-* attributes#}
+{#            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).#}
+{#            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.#}
+{#            var modal = $(this)#}
+{#            modal.find('.modal-title').text('New message to ' + recipient)#}
+{#            modal.find('.modal-body input').val(recipient)#}
+{#        })#}
+{#    </script>#}
